@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minichn.repository.GoodsRepository">
+
+    <resultMap id="goodsMap" type="Goods">
+        <id property="id" column="gid"/>
+        <result property="name" column="gname"/>
+        <result property="price" column="price"/>
+        <result property="details" column="details"/>
+        <!-- 映射type -->
+        <association property="type" javaType="Type">
+            <id property="id" column="tid"/>
+            <result property="name" column="tname"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="goodsMap">
+        select g.id gid,g.name gname,g.price,g.details,t.id tid,t.name tname from t_goods g,t_type t where g.tid = t.id order by gid limit #{param1},#{param2}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(id) from t_goods
+    </select>
+
+    <select id="findById" resultMap="goodsMap" >
+        select id gid,name gname,price,details,tid from t_goods where id = #{id}
+    </select>
+
+    <insert id="save" parameterType="Goods">
+        insert into t_goods(name,price,details,tid) values(#{name},#{price},#{details},#{type.id})
+    </insert>
+
+    <update id="update" parameterType="Goods">
+        update t_goods set name = #{name},price = #{price},details = #{details},tid = #{type.id} where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        delete from t_goods where id = #{id}
+    </delete>
+</mapper>
